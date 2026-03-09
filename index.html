@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AutoML-X — Intelligent Fraud Detection</title>
+  <meta name="description" content="Production-ready AutoML fraud detection with SHAP explainability. Zero code required."/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,600;0,900;1,300&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --ink: #0f0f14;
+      --ink2: #2d2d3a;
+      --mid: #4b5563;
+      --soft: #9ca3af;
+      --border: #e5e7eb;
+      --bg: #ffffff;
+      --bg2: #f9fafb;
+      --bg3: #f3f4f6;
+      --accent: #4f46e5;
+      --accent-light: #eef2ff;
+      --accent-mid: #818cf8;
+      --green: #059669;
+      --green-light: #ecfdf5;
+      --red: #dc2626;
+      --red-light: #fef2f2;
+      --yellow: #d97706;
+      --yellow-light: #fffbeb;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      overflow-x: hidden;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* TOP BAR */
+    .topbar {
+      background: var(--accent);
+      color: #fff;
+      text-align: center;
+      padding: 0.55rem 1rem;
+      font-size: 0.82rem;
+      font-weight: 500;
+    }
+    .topbar a { color: #c7d2fe; text-decoration: underline; margin-left: 0.4rem; }
+
+    /* NAV */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(255,255,255,0.93);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 2.5rem;
+      height: 64px;
+    }
+
+    .logo {
+      font-family: 'Fraunces', serif;
+      font-weight: 900;
+      font-size: 1.35rem;
+      color: var(--ink);
+      text-decoration: none;
+      letter-spacing: -0.03em;
+    }
+    .logo span { color: var(--accent); }
+
+    .nav-links { display: flex; align-items: center; gap: 2rem; list-style: none; }
+    .nav-links a { color: var(--mid); text-decoration: none; font-size: 0.9rem; font-weight: 500; transition: color 0.2s; }
+    .nav-links a:hover { color: var(--ink); }
+
+    .nav-btn {
+      background: var(--accent) !important;
+      color: #fff !important;
+      padding: 0.5rem 1.3rem;
+      border-radius: 8px;
+      font-weight: 600 !important;
+      transition: background 0.2s, transform 0.15s !important;
+    }
+    .nav-btn:hover { background: #4338ca !important; transform: translateY(-1px); }
+
+    /* HERO */
+    .hero {
+      padding: 5rem 2rem 4rem;
+      max-width: 900px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .hero-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--accent-light);
+      color: var(--accent);
+      font-family: 'DM Mono', monospace;
+      font-size: 0.78rem;
+      font-weight: 500;
+      padding: 0.4rem 1rem;
+      border-radius: 100px;
+      margin-bottom: 1.8rem;
+      border: 1px solid #c7d2fe;
+    }
+
+    .live-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--green);
+      animation: blink 2s ease-in-out infinite;
+    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+    h1 {
+      font-family: 'Fraunces', serif;
+      font-size: clamp(2.8rem, 6vw, 5rem);
+      font-weight: 900;
+      line-height: 1.05;
+      letter-spacing: -0.04em;
+      color: var(--ink);
+      margin-bottom: 1.3rem;
+    }
+    h1 em { font-style: italic; font-weight: 300; color: var(--accent); }
+
+    .hero-desc {
+      font-size: 1.15rem;
+      color: var(--mid);
+      max-width: 560px;
+      margin: 0 auto 2.5rem;
+      line-height: 1.75;
+      font-weight: 400;
+    }
+
+    .hero-actions { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      text-decoration: none;
+      padding: 0.9rem 2rem;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+    .btn-accent {
+      background: var(--accent);
+      color: #fff;
+      box-shadow: 0 4px 14px rgba(79,70,229,0.25);
+    }
+    .btn-accent:hover { background: #4338ca; transform: translateY(-2px); box-shadow: 0 8px 24px rgba(79,70,229,0.35); }
+    .btn-outline {
+      background: transparent; color: var(--ink2);
+      border: 1.5px solid var(--border);
+    }
+    .btn-outline:hover { border-color: #c7d2fe; background: var(--accent-light); color: var(--accent); transform: translateY(-2px); }
+
+    /* STATS */
+    .stats-wrap {
+      max-width: 760px;
+      margin: 3.5rem auto 0;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      border: 1.5px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.06);
+    }
+    .stat {
+      padding: 1.4rem 1rem;
+      text-align: center;
+      border-right: 1.5px solid var(--border);
+      background: var(--bg);
+    }
+    .stat:last-child { border-right: none; }
+    .stat-num {
+      display: block;
+      font-family: 'Fraunces', serif;
+      font-size: 2rem;
+      font-weight: 900;
+      color: var(--accent);
+      letter-spacing: -0.03em;
+      line-height: 1;
+      margin-bottom: 0.3rem;
+    }
+    .stat-lbl {
+      display: block;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--soft);
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+    }
+
+    /* DIVIDER */
+    .divider { border: none; border-top: 1px solid var(--border); max-width: 1080px; margin: 0 auto; }
+
+    /* SECTION */
+    .section { max-width: 1080px; margin: 0 auto; padding: 5rem 2rem; }
+
+    .section-eyebrow {
+      display: flex; align-items: center; gap: 0.6rem;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.72rem; font-weight: 500;
+      color: var(--accent);
+      text-transform: uppercase; letter-spacing: 0.1em;
+      margin-bottom: 1rem;
+    }
+    .section-eyebrow::before {
+      content: ''; display: block;
+      width: 24px; height: 2px;
+      background: var(--accent); border-radius: 2px;
+    }
+
+    .section-h {
+      font-family: 'Fraunces', serif;
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      line-height: 1.1;
+      color: var(--ink);
+      margin-bottom: 0.8rem;
+    }
+
+    .section-sub { font-size: 1rem; color: var(--mid); max-width: 500px; margin-bottom: 3rem; line-height: 1.7; }
+
+    /* FEATURES */
+    .features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+
+    .fcard {
+      background: var(--bg2);
+      border: 1.5px solid var(--border);
+      border-radius: 14px;
+      padding: 2rem 1.8rem;
+      transition: all 0.25s;
+    }
+    .fcard:hover { border-color: #c7d2fe; box-shadow: 0 8px 30px rgba(79,70,229,0.1); transform: translateY(-3px); background: #fff; }
+
+    .fcard-icon {
+      width: 44px; height: 44px;
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.3rem; margin-bottom: 1.2rem;
+    }
+    .icon-purple { background: var(--accent-light); }
+    .icon-green  { background: var(--green-light); }
+    .icon-red    { background: var(--red-light); }
+    .icon-yellow { background: var(--yellow-light); }
+
+    .fcard-title { font-family: 'Fraunces', serif; font-size: 1.05rem; font-weight: 600; color: var(--ink); margin-bottom: 0.6rem; }
+    .fcard-desc  { font-size: 0.88rem; color: var(--mid); line-height: 1.7; }
+
+    /* STEPS */
+    .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; }
+    .step { padding: 2rem; background: var(--bg); border: 1.5px solid var(--border); border-radius: 14px; transition: all 0.25s; }
+    .step:hover { border-color: #c7d2fe; box-shadow: 0 6px 24px rgba(79,70,229,0.08); transform: translateY(-3px); }
+    .step-num { font-family: 'Fraunces', serif; font-size: 3.5rem; font-weight: 900; color: #e0e7ff; line-height: 1; margin-bottom: 1rem; letter-spacing: -0.04em; }
+    .step-title { font-family: 'Fraunces', serif; font-size: 1.1rem; font-weight: 600; color: var(--ink); margin-bottom: 0.6rem; }
+    .step-desc  { font-size: 0.88rem; color: var(--mid); line-height: 1.7; }
+
+    /* METRICS */
+    .metrics-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-bottom: 3rem; }
+    .metric-card { padding: 1.8rem; border-radius: 14px; border: 1.5px solid; }
+    .metric-card.green { background: var(--green-light); border-color: #a7f3d0; }
+    .metric-card.blue  { background: var(--accent-light); border-color: #c7d2fe; }
+    .metric-card.amber { background: var(--yellow-light); border-color: #fde68a; }
+    .metric-label { font-family: 'DM Mono', monospace; font-size: 0.72rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.5rem; }
+    .metric-card.green .metric-label { color: var(--green); }
+    .metric-card.blue  .metric-label { color: var(--accent); }
+    .metric-card.amber .metric-label { color: var(--yellow); }
+    .metric-value { font-family: 'Fraunces', serif; font-size: 2.4rem; font-weight: 900; letter-spacing: -0.04em; line-height: 1; margin-bottom: 0.3rem; color: var(--ink); }
+    .metric-desc  { font-size: 0.82rem; color: var(--mid); }
+
+    /* TERMINAL */
+    .terminal { background: #0f1117; border: 1.5px solid #1e2030; border-radius: 14px; overflow: hidden; font-family: 'DM Mono', monospace; box-shadow: 0 20px 60px rgba(0,0,0,0.12); }
+    .term-bar { display: flex; align-items: center; gap: 6px; padding: 0.9rem 1.2rem; background: #1a1d2e; border-bottom: 1px solid #1e2030; }
+    .dot { width: 10px; height: 10px; border-radius: 50%; }
+    .dr{background:#ff5f57} .dy{background:#ffbd2e} .dg{background:#28ca42}
+    .term-title { font-size: 0.72rem; color: #4b5563; margin-left: 0.5rem; }
+    .term-body  { padding: 1.5rem 1.8rem; font-size: 0.82rem; line-height: 2; }
+    .tc{color:#374151} .tg{color:#34d399} .tp{color:#a78bfa} .ty{color:#fbbf24} .tw{color:#e5e7eb} .tm{color:#6b7280}
+
+    /* TECH PILLS */
+    .pills { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-top: 2rem; }
+    .pill {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      background: var(--bg2); border: 1.5px solid var(--border);
+      color: var(--ink2); font-family: 'DM Mono', monospace;
+      font-size: 0.78rem; padding: 0.4rem 0.9rem; border-radius: 8px;
+      font-weight: 500; transition: all 0.2s;
+    }
+    .pill:hover { background: var(--accent-light); border-color: #c7d2fe; color: var(--accent); }
+
+    /* CTA */
+    .cta-wrap {
+      background: var(--ink);
+      border-radius: 20px;
+      padding: 5rem 3rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      max-width: 1080px;
+      margin: 0 auto 5rem;
+    }
+    .cta-wrap::before {
+      content: '';
+      position: absolute; top: -100px; left: 50%; transform: translateX(-50%);
+      width: 500px; height: 300px;
+      background: radial-gradient(circle, rgba(99,102,241,0.3), transparent 70%);
+      pointer-events: none;
+    }
+    .cta-wrap h2 { font-family: 'Fraunces', serif; font-size: clamp(2rem, 4vw, 3.2rem); font-weight: 900; letter-spacing: -0.04em; color: #fff; margin-bottom: 1rem; position: relative; }
+    .cta-wrap p  { color: #9ca3af; font-size: 1rem; margin-bottom: 2.5rem; position: relative; }
+
+    .btn-ghost { background: rgba(255,255,255,0.08); color: #fff; border: 1.5px solid rgba(255,255,255,0.15); }
+    .btn-ghost:hover { background: rgba(255,255,255,0.15); transform: translateY(-2px); color: #fff; }
+
+    /* FOOTER */
+    footer { border-top: 1px solid var(--border); padding: 2rem 2.5rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; max-width: 1080px; margin: 0 auto; }
+    .footer-brand { font-family: 'Fraunces', serif; font-weight: 900; font-size: 1rem; color: var(--ink); }
+    .footer-brand span { color: var(--accent); }
+    .footer-meta { font-size: 0.82rem; color: var(--soft); }
+    .footer-links { display: flex; gap: 1.5rem; }
+    .footer-links a { color: var(--mid); text-decoration: none; font-size: 0.85rem; font-weight: 500; transition: color 0.2s; }
+    .footer-links a:hover { color: var(--accent); }
+
+    /* SCROLL REVEAL */
+    .reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.65s ease, transform 0.65s ease; }
+    .reveal.show { opacity: 1; transform: none; }
+
+    /* RESPONSIVE */
+    @media(max-width:768px){
+      .features-grid, .steps, .metrics-grid { grid-template-columns: 1fr; }
+      .stats-wrap { grid-template-columns: repeat(2,1fr); }
+      .nav-links { display: none; }
+      nav { padding: 0 1.2rem; }
+      .cta-wrap { margin: 0 1rem 3rem; padding: 3rem 1.5rem; }
+      footer { flex-direction: column; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="topbar">
+    🎓 Student project from MITS Gwalior · Open source &amp; completely free
+    <a href="https://github.com/Sujal-baghela/Automl-fraud-detection" target="_blank">View on GitHub →</a>
+  </div>
+
+  <nav>
+    <a href="#" class="logo">AutoML<span>-X</span></a>
+    <ul class="nav-links">
+      <li><a href="#features">Features</a></li>
+      <li><a href="#how-it-works">How it works</a></li>
+      <li><a href="#performance">Performance</a></li>
+      <li><a href="https://github.com/Sujal-baghela/Automl-fraud-detection" target="_blank">GitHub</a></li>
+      <li><a href="https://dark-ui-automl-fraud-detection.hf.space" target="_blank" class="nav-btn">Launch App →</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-tag">
+      <div class="live-dot"></div>
+      Live on HuggingFace Spaces · v2.0
+    </div>
+    <h1>Detect fraud.<br/><em>Understand why.</em></h1>
+    <p class="hero-desc">
+      Upload any binary classification CSV and get fraud predictions,
+      SHAP explainability, and cost-optimized thresholds — no code required.
+    </p>
+    <div class="hero-actions">
+      <a href="https://dark-ui-automl-fraud-detection.hf.space" target="_blank" class="btn btn-accent">🚀 Launch Live Demo</a>
+      <a href="https://github.com/Sujal-baghela/Automl-fraud-detection" target="_blank" class="btn btn-outline">⭐ Star on GitHub</a>
+    </div>
+    <div class="stats-wrap reveal">
+      <div class="stat"><span class="stat-num">0.975</span><span class="stat-lbl">ROC-AUC</span></div>
+      <div class="stat"><span class="stat-num">285</span><span class="stat-lbl">Tests Passing</span></div>
+      <div class="stat"><span class="stat-num">99%</span><span class="stat-lbl">Code Coverage</span></div>
+      <div class="stat"><span class="stat-num">2M+</span><span class="stat-lbl">Rows Supported</span></div>
+    </div>
+  </div>
+
+  <hr class="divider"/>
+
+  <!-- FEATURES -->
+  <div class="section reveal" id="features">
+    <div class="section-eyebrow">Capabilities</div>
+    <h2 class="section-h">Everything built in.<br/>Nothing to configure.</h2>
+    <p class="section-sub">Built for analysts, researchers, and students who want production ML power without writing a single line of code.</p>
+    <div class="features-grid">
+      <div class="fcard">
+        <div class="fcard-icon icon-purple">🤖</div>
+        <div class="fcard-title">AutoML Engine</div>
+        <p class="fcard-desc">Automatically selects and tunes the best model for your dataset. Supports 100 rows all the way up to 2 million rows across 6 smart size tiers.</p>
+      </div>
+      <div class="fcard">
+        <div class="fcard-icon icon-green">🔍</div>
+        <div class="fcard-title">SHAP Explainability</div>
+        <p class="fcard-desc">Every prediction comes with a full SHAP breakdown — see exactly which features drove the fraud decision and by how much.</p>
+      </div>
+      <div class="fcard">
+        <div class="fcard-icon icon-yellow">💰</div>
+        <div class="fcard-title">Cost-Optimized Threshold</div>
+        <p class="fcard-desc">Balances false positives vs false negatives based on your real business cost model — not just raw accuracy metrics.</p>
+      </div>
+      <div class="fcard">
+        <div class="fcard-icon icon-purple">📦</div>
+        <div class="fcard-title">Batch Processing</div>
+        <p class="fcard-desc">Upload a CSV with thousands of transactions. Get risk scores, confidence intervals, and downloadable results instantly.</p>
+      </div>
+      <div class="fcard">
+        <div class="fcard-icon icon-red">🌊</div>
+        <div class="fcard-title">Drift Detection</div>
+        <p class="fcard-desc">Monitors your model for data drift and performance degradation over time — alerts you before accuracy degrades in production.</p>
+      </div>
+      <div class="fcard">
+        <div class="fcard-icon icon-green">📊</div>
+        <div class="fcard-title">MLflow Registry</div>
+        <p class="fcard-desc">Full model versioning with MLflow. Champion/challenger promotion, experiment tracking, and fully reproducible training runs.</p>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider"/>
+
+  <!-- HOW IT WORKS -->
+  <div class="section reveal" id="how-it-works">
+    <div class="section-eyebrow">Workflow</div>
+    <h2 class="section-h">Three steps.<br/>Production results.</h2>
+    <p class="section-sub">No ML knowledge required. Just bring your data.</p>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">01</div>
+        <div class="step-title">Upload Your CSV</div>
+        <p class="step-desc">Drop any binary classification dataset. AutoML-X detects columns, handles missing values, and engineers features automatically — no preprocessing needed.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">02</div>
+        <div class="step-title">Model Scores Risk</div>
+        <p class="step-desc">The engine trains, evaluates, and selects the best model. You get fraud probability scores with confidence intervals for every single row.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <div class="step-title">Review &amp; Decide</div>
+        <p class="step-desc">Explore SHAP explanations per prediction, tune your business decision threshold, and download results — all in a clean, interactive dashboard.</p>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider"/>
+
+  <!-- PERFORMANCE -->
+  <div class="section reveal" id="performance">
+    <div class="section-eyebrow">Model Performance</div>
+    <h2 class="section-h">Numbers that speak<br/>for themselves.</h2>
+    <p class="section-sub">Validated on real transaction data with SMOTE-balanced training and cost-optimized threshold selection.</p>
+    <div class="metrics-grid">
+      <div class="metric-card green">
+        <div class="metric-label">ROC-AUC Score</div>
+        <div class="metric-value">0.975</div>
+        <div class="metric-desc">Near-perfect separation between fraud and legitimate transactions on the test set.</div>
+      </div>
+      <div class="metric-card blue">
+        <div class="metric-label">Fraud Recall</div>
+        <div class="metric-value">89.8%</div>
+        <div class="metric-desc">Catches almost 9 in 10 fraudulent transactions before they cause financial damage.</div>
+      </div>
+      <div class="metric-card amber">
+        <div class="metric-label">Test Coverage</div>
+        <div class="metric-value">99%</div>
+        <div class="metric-desc">285 passing tests with a full CI/CD pipeline running on every commit via GitHub Actions.</div>
+      </div>
+    </div>
+    <div class="terminal">
+      <div class="term-bar">
+        <div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div>
+        <span class="term-title">automl-x · evaluation output</span>
+      </div>
+      <div class="term-body">
+        <div><span class="tc"># Running AutoML-X evaluation pipeline</span></div>
+        <div><span class="tg">$</span> <span class="tw">python evaluate.py --dataset fraud_sample.csv</span></div>
+        <div><span class="tm">  Loading dataset... <span class="tp">50,000 rows · 28 features</span></span></div>
+        <div><span class="tm">  Applying SMOTE balancing... <span class="tg">done</span></span></div>
+        <div><span class="tm">  Training candidates: <span class="ty">RandomForest · XGBoost · LightGBM</span></span></div>
+        <div><span class="tm">  Best model selected: <span class="tg">RandomForestClassifier</span></span></div>
+        <div><span class="tm">  ROC-AUC  : <span class="tg">0.9752</span></span></div>
+        <div><span class="tm">  Recall   : <span class="tg">0.898</span>  <span class="tc"># cost-threshold applied</span></span></div>
+        <div><span class="tm">  Threshold: <span class="tp">0.63</span>   <span class="tc"># business-cost optimized</span></span></div>
+        <div><span class="tg">$</span> <span class="tw">pytest --cov=src tests/ -q</span></div>
+        <div><span class="tg">  285 passed</span><span class="tw">, 0 failed · coverage: </span><span class="tg">99%</span><span class="tm"> · 12.4s</span></div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider"/>
+
+  <!-- STACK -->
+  <div class="section reveal" id="stack">
+    <div class="section-eyebrow">Technology</div>
+    <h2 class="section-h">Production-grade stack.</h2>
+    <p class="section-sub">Built with battle-tested open source tools. Dockerized and deployed on HuggingFace Spaces with full CI/CD automation.</p>
+    <div class="pills">
+      <span class="pill">🐍 Python 3.11</span>
+      <span class="pill">⚡ Streamlit</span>
+      <span class="pill">🔬 scikit-learn</span>
+      <span class="pill">💡 SHAP</span>
+      <span class="pill">📈 MLflow</span>
+      <span class="pill">🐳 Docker</span>
+      <span class="pill">🤗 HuggingFace Spaces</span>
+      <span class="pill">🧪 pytest · 99% cov</span>
+      <span class="pill">🔄 GitHub Actions CI</span>
+      <span class="pill">📊 Plotly</span>
+      <span class="pill">⚖️ SMOTE</span>
+      <span class="pill">🚀 FastAPI</span>
+      <span class="pill">🗄️ SQLite · MLflow Registry</span>
+      <span class="pill">📡 supervisord</span>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <div class="cta-wrap reveal">
+    <h2>Ready to detect fraud<br/>in your data?</h2>
+    <p>Free, open-source, and running live right now. No signup required.</p>
+    <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap">
+      <a href="https://dark-ui-automl-fraud-detection.hf.space" target="_blank" class="btn btn-accent">🚀 Launch AutoML-X</a>
+      <a href="https://github.com/Sujal-baghela/Automl-fraud-detection" target="_blank" class="btn btn-ghost">View Source Code</a>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-brand">AutoML<span>-X</span></div>
+    <div class="footer-meta">Built by Sujal Baghela &amp; Sameer Bhilware · MITS Gwalior · 2025</div>
+    <div class="footer-links">
+      <a href="https://github.com/Sujal-baghela/Automl-fraud-detection" target="_blank">GitHub</a>
+      <a href="https://dark-ui-automl-fraud-detection.hf.space" target="_blank">Live Demo</a>
+      <a href="https://dark-ui-automl-fraud-detection.hf.space/docs" target="_blank">API Docs</a>
+    </div>
+  </footer>
+
+  <script>
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('show'); });
+    }, { threshold: 0.08 });
+    document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+  </script>
+</body>
+</html>
